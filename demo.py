@@ -1,8 +1,9 @@
 #!/bin/python3
 import concurrent.futures
-import sys
 
 import requests
+
+import user_input
 
 
 def index_file(filename):
@@ -67,25 +68,8 @@ def perform_http_get_request(parameters):
         count = count + 1
 
 
-# handle all the user parameters
-def handle_user_input():
-    documentation_help = '''
-    If you see this it means that you have selected the help option.
-    This project is currently under construction.
-    Please, be patient while I make this project better
-    
-    [program name] [-h,--help] -> show the help table
-    [program name] [-t,--thread] [number] -> select the number of threads to use (default is 10)
-    [program name] [-w,--wordlist] filename -> select the wordlist you want
-    '''
-    if 'help' in sys.argv:
-        print(documentation_help)
-        exit(0)
-    print(sys.argv)
-
-
 if __name__ == "__main__":
-    handle_user_input()
+    user_input = user_input.handle_user_input()
     filename = "/usr/share/dirb/wordlists/common.txt"
     data = index_file(filename)
 
