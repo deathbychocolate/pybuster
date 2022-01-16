@@ -1,0 +1,14 @@
+Features to implement:
+Optimize wordlist indexing
+Save the GET response body
+Save the GET response headers
+Save the GET response body AND headers?
+Generate custom/random/preselected headers, thereby changing the users' GET fingerprint
+Implement IP spoofing?
+Implement a proxy functionality?
+Output a summary list of interesting directories or files to a txt file
+Implement recursion?
+Implement recurring pybuster (like recursion but a top-down approach)
+Add file extensions to items of the wordlist:
+    words such as: password, 1234, index, admin
+    would be assigned file extensions such as: .php, .old, .bak, .xxx, .new etc
