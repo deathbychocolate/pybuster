@@ -3,7 +3,7 @@ import concurrent.futures
 
 import requests
 
-from user_input import handle_user_input
+from pybuster_input import handle_user_input
 
 
 def index_file(filename):
