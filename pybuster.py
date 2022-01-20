@@ -1,9 +1,8 @@
 #!/bin/python3
+import argparse
 import concurrent.futures
 
 import requests
-
-from pybuster_input import handle_user_input
 
 
 def index_file(filename):
@@ -69,14 +68,28 @@ def perform_http_get_request(parameters):
         count = count + 1
 
 
+def handle_user_input():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--thread", help="Number of threads")
+    parser.add_argument("-u", "--url", help="URL to use")
+    parser.add_argument("-v", "--version", help="Show program version")
+    parser.add_argument("-w", "--wordlist", help="Wordlist to use")
+    arguments = parser.parse_args()
+
+    if arguments.thread is not None:
+        arguments.thread = int(arguments.thread)
+
+    return arguments
+
+
 def run():
-    parameters = handle_user_input()
-    data = index_file(parameters["--wordlist"])
-    thread_count = parameters["--thread"]
+    arguments = handle_user_input()
+    data = index_file(arguments.wordlist)
+    thread_count = arguments.thread
 
     file_thread_indexes = assign_indexes(data, thread_count)
     with concurrent.futures.ThreadPoolExecutor(
             thread_count) as executor:
         for i in range(thread_count):
-            parameters = (data, file_thread_indexes[i])
-            executor.submit(perform_http_get_request, parameters)
+            arguments = (data, file_thread_indexes[i])
+            executor.submit(perform_http_get_request, arguments)
