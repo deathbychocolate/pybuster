@@ -1,4 +1,5 @@
-#!/bin/python3
+"""Pybuster file contains all functions needed to bust a target
+"""
 import argparse
 import concurrent.futures
 
@@ -6,7 +7,8 @@ import requests
 
 
 def index_file(filename):
-    """Index file given filename"""
+    """Index file given filename
+    """
     file = open(filename, encoding="latin-1")
     content = {}
     line_count = 1
@@ -20,7 +22,8 @@ def index_file(filename):
 
 
 def assign_per_thread_work(line_count, thread_count):
-    """Return a tuple containing the lines_per_thread, lines_per_thread_last"""
+    """Return a tuple containing the lines_per_thread, lines_per_thread_last
+    """
     # Compute the work for each thread
     lines_per_thread = int(line_count / thread_count)
 
@@ -32,7 +35,8 @@ def assign_per_thread_work(line_count, thread_count):
 
 
 def assign_indexes(data, thread_count):
-    """Return a list of tuples (startIndex, endIndex) for each thread"""
+    """Return a list of tuples (startIndex, endIndex) for each thread
+    """
     _, line_count = data
     start_index = 0
     end_index = 0
@@ -56,7 +60,8 @@ def assign_indexes(data, thread_count):
 
 
 def perform_http_get_request(parameters):
-    """Perform simple GET request using requests module"""
+    """Perform simple GET request using requests module
+    """
     data, file_thread_indexes = parameters
     content, _ = data
     start_index, end_index = file_thread_indexes
@@ -71,7 +76,8 @@ def perform_http_get_request(parameters):
 
 
 def handle_user_input():
-    """This method uses argparse to process user input"""
+    """This method uses argparse to process user input
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument("target",           help="Target Website/URL/URI to enumerate")
     parser.add_argument("-t", "--thread",   help="Number of threads : Default is 10")
