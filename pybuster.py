@@ -2,8 +2,11 @@
 """
 import argparse
 import concurrent.futures
-
+import sys
 import requests
+
+
+DEFAULT_THREAD_COUNT = 10
 
 
 def index_file(filename):
@@ -69,9 +72,9 @@ def perform_http_get_request(parameters):
 
     while count <= end_index:
         url = f"https://dvwa.co.uk/{content[count]}"
-        r = requests.get(url, timeout=10, allow_redirects=False)
-        if r.status_code != 404:
-            print(f"GET {r.status_code} {url}")
+        response = requests.get(url, timeout=10, allow_redirects=False)
+        if response.status_code != 404:
+            print(f"GET {response.status_code} {url}")
         count = count + 1
 
 
@@ -79,24 +82,31 @@ def handle_user_input():
     """This method uses argparse to process user input
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument("target",           help="Target Website/URL/URI to enumerate")
-    parser.add_argument("-t", "--thread",   help="Number of threads : Default is 10")
-    parser.add_argument("-w", "--wordlist", help="Wordlist to use   : Default is ./wordlist.txt")
-    parser.add_argument("-v", "--version",  help="Show program version")
+    parser.add_argument("-u", "--url"     , help="Target Website/URL/URI to enumerate", type=str)
+    parser.add_argument("-w", "--wordlist", help="Wordlist to use", type=str)
+    parser.add_argument("-t", "--thread"  , help="Number of threads : Default is 10", type=int)
+    parser.add_argument("-v", "--version" , help="Show program version")
     arguments = parser.parse_args()
 
-    if arguments.thread is not None:
-        arguments.thread = int(arguments.thread)
-    # if arguments.url is not None:
+    # manual argument check
+    if arguments.url is None:
+        print("ERROR: missing argument 'url'")
+        parser.print_help()
+        sys.exit(0)
+    elif arguments.wordlist is None:
+        print("ERROR: missing argument 'wordlist'")
+        parser.print_help()
+        sys.exit(0)
 
-    # if arguments.url is not None:
+    # set default values
+    if arguments.thread is None:
+        arguments.thread = DEFAULT_THREAD_COUNT
 
     return arguments
 
 
 def run(args):
     """Central point to run a job"""
-    args = handle_user_input()
     data = index_file(args.wordlist)
     thread_count = args.thread
 
@@ -106,3 +116,13 @@ def run(args):
         for i in range(thread_count):
             args = (data, file_thread_indexes[i])
             executor.submit(perform_http_get_request, args)
+
+
+def main():
+    """Start here"""
+    args = handle_user_input()
+    run(args)
+
+
+if __name__ == '__main__':
+    main()
