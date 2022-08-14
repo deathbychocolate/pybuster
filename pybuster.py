@@ -1,7 +1,8 @@
 """Pybuster file contains all functions needed to bust a target
 """
-import argparse
 from concurrent.futures import ThreadPoolExecutor
+
+import argparse
 import sys
 import requests
 
@@ -74,14 +75,13 @@ def perform_http_get_request(parameters):
     data, file_thread_indexes = parameters
     content, _ = data
     start_index, end_index = file_thread_indexes
-    count = start_index
 
-    while count <= end_index:
-        url = b"https://dvwa.co.uk/" + content[count]
+    while start_index <= end_index:
+        url = b"https://dvwa.co.uk/" + content[start_index]
         response = requests.get(url, timeout=10, allow_redirects=False)
         if response.status_code in STATUS_CODES_POSITIVE:
             print(f"GET {response.status_code} {url}")
-        count = count + 1
+        start_index = start_index + 1
 
 
 def handle_user_input() -> argparse.Namespace:
@@ -89,8 +89,8 @@ def handle_user_input() -> argparse.Namespace:
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--url"     , help="Target Website/URL/URI to enumerate", type=str)
-    parser.add_argument("-w", "--wordlist", help="Wordlist to use", type=str)
-    parser.add_argument("-t", "--thread"  , help="Number of threads : Default is 10", type=int)
+    parser.add_argument("-w", "--wordlist", help="Wordlist to use"                    , type=str)
+    parser.add_argument("-t", "--thread"  , help="Number of threads [default=10]"     , type=int)
     parser.add_argument("-v", "--version" , help="Show program version")
     arguments = parser.parse_args()
 
