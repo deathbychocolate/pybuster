@@ -6,42 +6,47 @@ import sys
 import requests
 
 
-DEFAULT_THREAD_COUNT = 10
-STATUS_CODES_POSITIVE = ["200", "204", "301", "302", "307", "401", "403"]
+THREAD_COUNT_DEFAULT  = 10
+STATUS_CODES_POSITIVE = [200, 204, 301, 302, 307, 401, 403]
+STATUS_CODES_NEGATIVE = [404]
 
 
-def index_file(filename):
+def count_lines(filepath: str) -> int:
+    """Simply count lines in file
+    """
+    linecount = 0
+    with open(filepath, "rb") as filepointer:
+        linecount = len(filepointer.readlines())
+    return linecount
+
+
+def index_file(filename: str) -> tuple[dict, int]:
     """Index file given filename
     """
-    file = open(filename, encoding="latin-1")
-    content = {}
-    line_count = 1
-    for line in file.readlines():
-        content[line_count] = line.rstrip()
-        line_count = line_count + 1
-    data = (content, line_count)
+    with open(filename, "rb") as filepointer:
+        content = {}
+        line_count = 1
+        for line in filepointer.readlines():
+            content[line_count] = line.rstrip()
+            line_count = line_count + 1
+        data = (content, line_count)
 
-    file.close()
     return data
 
 
-def assign_per_thread_work(line_count, thread_count):
+def assign_per_thread_work(line_count: int, thread_count: int) -> tuple[int, int]:
     """Return a tuple containing the lines_per_thread, lines_per_thread_last
     """
-    # Compute the work for each thread
     lines_per_thread = int(line_count / thread_count)
-
-    # Compute how many lines to add to last thread
-    lines_to_add = (line_count - (lines_per_thread * thread_count))
-    lines_per_thread_last = lines_per_thread + lines_to_add
+    lines_per_thread_last = lines_per_thread + (line_count % thread_count)
 
     return lines_per_thread, lines_per_thread_last
 
 
-def assign_indexes(data, thread_count):
+def assign_indexes(filename: str, thread_count: int) -> list:
     """Return a list of tuples (startIndex, endIndex) for each thread
     """
-    _, line_count = data
+    line_count = count_lines(filename)
     start_index = 0
     end_index = 0
 
@@ -72,14 +77,14 @@ def perform_http_get_request(parameters):
     count = start_index
 
     while count <= end_index:
-        url = f"https://dvwa.co.uk/{content[count]}"
+        url = b"https://dvwa.co.uk/" + content[count]
         response = requests.get(url, timeout=10, allow_redirects=False)
         if response.status_code in STATUS_CODES_POSITIVE:
             print(f"GET {response.status_code} {url}")
         count = count + 1
 
 
-def handle_user_input():
+def handle_user_input() -> argparse.Namespace:
     """This method uses argparse to process user input
     """
     parser = argparse.ArgumentParser()
@@ -101,24 +106,24 @@ def handle_user_input():
 
     # set default values
     if arguments.thread is None:
-        arguments.thread = DEFAULT_THREAD_COUNT
+        arguments.thread = THREAD_COUNT_DEFAULT
 
     return arguments
 
 
-def run(args):
+def run(args: argparse.Namespace) -> None:
     """Central point to run a job"""
     data = index_file(args.wordlist)
     thread_count = args.thread
 
-    file_thread_indexes = assign_indexes(data, thread_count)
+    file_thread_indexes = assign_indexes(args.wordlist, thread_count)
     with ThreadPoolExecutor(thread_count) as executor:
         for i in range(thread_count):
             args = (data, file_thread_indexes[i])
             executor.submit(perform_http_get_request, args)
 
 
-def main():
+def main() -> None:
     """Start here"""
     args = handle_user_input()
     run(args)
