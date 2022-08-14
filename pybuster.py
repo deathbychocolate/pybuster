@@ -1,12 +1,13 @@
 """Pybuster file contains all functions needed to bust a target
 """
 import argparse
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor
 import sys
 import requests
 
 
 DEFAULT_THREAD_COUNT = 10
+STATUS_CODES_POSITIVE = ["200", "204", "301", "302", "307", "401", "403"]
 
 
 def index_file(filename):
@@ -73,7 +74,7 @@ def perform_http_get_request(parameters):
     while count <= end_index:
         url = f"https://dvwa.co.uk/{content[count]}"
         response = requests.get(url, timeout=10, allow_redirects=False)
-        if response.status_code != 404:
+        if response.status_code in STATUS_CODES_POSITIVE:
             print(f"GET {response.status_code} {url}")
         count = count + 1
 
@@ -111,8 +112,7 @@ def run(args):
     thread_count = args.thread
 
     file_thread_indexes = assign_indexes(data, thread_count)
-    with concurrent.futures.ThreadPoolExecutor(
-            thread_count) as executor:
+    with ThreadPoolExecutor(thread_count) as executor:
         for i in range(thread_count):
             args = (data, file_thread_indexes[i])
             executor.submit(perform_http_get_request, args)
