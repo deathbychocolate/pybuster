@@ -90,7 +90,7 @@ def handle_user_input() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--url"     , help="Target Website/URL/URI to enumerate", type=str)
     parser.add_argument("-w", "--wordlist", help="Wordlist to use"                    , type=str)
-    parser.add_argument("-t", "--thread"  , help="Number of threads [default=10]"     , type=int)
+    parser.add_argument("-t", "--threads"  , help="Number of threads [default=10]"    , type=int)
     parser.add_argument("-v", "--version" , help="Show program version")
     arguments = parser.parse_args()
 
@@ -105,8 +105,8 @@ def handle_user_input() -> argparse.Namespace:
         sys.exit(0)
 
     # set default values
-    if arguments.thread is None:
-        arguments.thread = THREAD_COUNT_DEFAULT
+    if arguments.threads is None:
+        arguments.threads = THREAD_COUNT_DEFAULT
 
     return arguments
 
@@ -114,7 +114,7 @@ def handle_user_input() -> argparse.Namespace:
 def run(args: argparse.Namespace) -> None:
     """Central point to run a job"""
     data = index_file(args.wordlist)
-    thread_count = args.thread
+    thread_count = args.threads
 
     file_thread_indexes = assign_indexes(args.wordlist, thread_count)
     with ThreadPoolExecutor(thread_count) as executor:
