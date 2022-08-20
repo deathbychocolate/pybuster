@@ -7,7 +7,6 @@ import sys
 import requests
 import validators
 
-
 from constants import THREAD_COUNT_DEFAULT
 from constants import STATUS_CODES_POSITIVE
 from constants import URL_FORMAT_BACKSLASH
@@ -71,14 +70,15 @@ def assign_indexes(filename: str, thread_count: int) -> list:
     return file_thread_indexes
 
 
-def http_get(parameters):
+def http_get(http_get_parameters):
     """Perform simple GET request using requests module
     """
-    indexed_wordlist, wordlist_indexes = parameters
+    indexed_wordlist, wordlist_indexes, target_url = http_get_parameters
+    target_url = bytes(target_url, 'utf8')
     start_index, end_index = wordlist_indexes
 
     while start_index <= end_index:
-        url = b''.join([b"https://dvwa.co.uk/", indexed_wordlist[start_index]])
+        url = b''.join([target_url, indexed_wordlist[start_index]])
         response = requests.get(url, timeout=10, allow_redirects=False)
         if response.status_code in STATUS_CODES_POSITIVE:
             print(f"GET {response.status_code} {url}")
@@ -123,14 +123,13 @@ def handle_user_input() -> argparse.Namespace:
 def run(args: argparse.Namespace) -> None:
     """Central point to run a job
     """
-    data = index_file(args.wordlist)
-    thread_count = args.threads
+    wordlist_indexed = index_file(args.wordlist)
 
-    file_thread_indexes = assign_indexes(args.wordlist, thread_count)
-    with ThreadPoolExecutor(thread_count) as executor:
-        for i in range(thread_count):
-            args = (data, file_thread_indexes[i])
-            executor.submit(http_get, args)
+    file_thread_indexes = assign_indexes(args.wordlist, args.threads)
+    with ThreadPoolExecutor(args.threads) as executor:
+        for i in range(args.threads):
+            http_get_parameters = (wordlist_indexed, file_thread_indexes[i], args.url)
+            executor.submit(http_get, http_get_parameters)
 
 
 def main() -> None:
