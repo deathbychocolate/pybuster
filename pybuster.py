@@ -21,18 +21,17 @@ def count_lines(filepath: str) -> int:
     return line_count
 
 
-def index_file(filename: str) -> tuple[dict, int]:
+def index_file(filename: str) -> dict:
     """Index file given filename
     """
     with open(filename, "rb") as filepointer:
-        content = {}
+        indexed_wordlist = {}
         line_count = 1
         for line in filepointer.readlines():
-            content[line_count] = line.rstrip()
+            indexed_wordlist[line_count] = line.rstrip()
             line_count = line_count + 1
-        data = (content, line_count)
 
-    return data
+    return indexed_wordlist
 
 
 def assign_per_thread_work(line_count: int, thread_count: int) -> tuple[int, int]:
@@ -74,12 +73,11 @@ def assign_indexes(filename: str, thread_count: int) -> list:
 def http_get(parameters):
     """Perform simple GET request using requests module
     """
-    data, file_thread_indexes = parameters
-    content, _ = data
-    start_index, end_index = file_thread_indexes
+    indexed_wordlist, wordlist_indexes = parameters
+    start_index, end_index = wordlist_indexes
 
     while start_index <= end_index:
-        url = b''.join([b"https://dvwa.co.uk/", content[start_index]])
+        url = b''.join([b"https://dvwa.co.uk/", indexed_wordlist[start_index]])
         response = requests.get(url, timeout=10, allow_redirects=False)
         if response.status_code in STATUS_CODES_POSITIVE:
             print(f"GET {response.status_code} {url}")
