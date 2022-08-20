@@ -5,11 +5,12 @@ from concurrent.futures import ThreadPoolExecutor
 import argparse
 import sys
 import requests
+import validators
+
 
 from constants import THREAD_COUNT_DEFAULT
 from constants import STATUS_CODES_POSITIVE
 from constants import URL_FORMAT_BACKSLASH
-from constants import URL_FORMAT_HTTPS
 
 
 def count_lines(filepath: str) -> int:
@@ -105,10 +106,12 @@ def handle_user_input() -> argparse.Namespace:
         sys.exit(0)
 
     # manual argument check (minor)
+    if not validators.url(arguments.url):
+        print("ERROR: url parameter is not valid")
+        print("ERROR: make sure to include the protocol (http[s]://)")
+        sys.exit(0)
     if not arguments.url.endswith(URL_FORMAT_BACKSLASH):
         arguments.url = ''.join([arguments.url, URL_FORMAT_BACKSLASH])
-    if not arguments.url.startswith(URL_FORMAT_HTTPS):
-        arguments.url = ''.join([URL_FORMAT_HTTPS, arguments.url])
 
     # set default values
     if arguments.threads is None:
