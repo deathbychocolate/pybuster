@@ -105,8 +105,8 @@ def handle_user_input() -> argparse.Namespace:
         sys.exit(0)
 
     # manual argument check (minor)
-    if arguments.url[-1] != URL_FORMAT_BACKSLASH:
-        arguments.url = arguments.url + URL_FORMAT_BACKSLASH
+    if not arguments.url.endswith(URL_FORMAT_BACKSLASH):
+        arguments.url = ''.join([arguments.url, URL_FORMAT_BACKSLASH])
     if not arguments.url.startswith(URL_FORMAT_HTTPS):
         arguments.url = ''.join([URL_FORMAT_HTTPS, arguments.url])
 
