@@ -6,3 +6,4 @@ STATUS_CODES_NEGATIVE = [404]
 URL_FORMAT_BACKSLASH  = '/'
 URL_FORMAT_HTTP       = 'http://'
 URL_FORMAT_HTTPS      = 'https://'
+VERSION_NUMBER        = 'no_version_yet'

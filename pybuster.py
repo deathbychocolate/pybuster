@@ -10,6 +10,7 @@ import validators
 from constants import THREAD_COUNT_DEFAULT
 from constants import STATUS_CODES_POSITIVE
 from constants import URL_FORMAT_BACKSLASH
+from constants import VERSION_NUMBER
 
 
 def count_lines(filepath: str) -> int:
@@ -73,15 +74,16 @@ def assign_indexes(filename: str, thread_count: int) -> list:
 def http_get(http_get_parameters):
     """Perform simple GET request using requests module
     """
-    indexed_wordlist, wordlist_indexes, target_url = http_get_parameters
-    target_url = bytes(target_url, 'utf8')
+    indexed_wordlist, wordlist_indexes, target_webpage = http_get_parameters
+    target_webpage = bytes(target_webpage, 'utf8')
     start_index, end_index = wordlist_indexes
 
     while start_index <= end_index:
-        url = b''.join([target_url, indexed_wordlist[start_index]])
-        response = requests.get(url, timeout=10, allow_redirects=False)
+        target_directory = indexed_wordlist[start_index]
+        target_full = b''.join([target_webpage, target_directory])
+        response = requests.get(target_full, timeout=10, allow_redirects=False)
         if response.status_code in STATUS_CODES_POSITIVE:
-            print(f"GET {response.status_code} {url}")
+            print(f"GET {response.status_code} {target_full.decode()}")
         start_index = start_index + 1
 
 
@@ -94,6 +96,10 @@ def handle_user_input() -> argparse.Namespace:
     parser.add_argument("-t", "--threads" , help="Number of threads [default=10]"     , type=int)
     parser.add_argument("-v", "--version" , help="Show program version")
     arguments = parser.parse_args()
+
+    if arguments.version is not None:
+        print(VERSION_NUMBER)
+        sys.exit(0)
 
     # manual argument check (major)
     if arguments.url is None:
