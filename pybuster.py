@@ -14,7 +14,7 @@ from constants import VERSION_NUMBER
 
 
 def count_lines(filepath: str) -> int:
-    """Simply count lines in file
+    """Return the number (int) of lines in a file, given a provided filepath.
     """
     line_count = 0
     with open(filepath, "rb") as filepointer:
@@ -23,7 +23,7 @@ def count_lines(filepath: str) -> int:
 
 
 def index_file(filename: str) -> dict:
-    """Index file given filename
+    """Return a dictionary where the key is the 'line number' and the value is the 'word'.
     """
     with open(filename, "rb") as filepointer:
         indexed_wordlist = {}
@@ -36,7 +36,7 @@ def index_file(filename: str) -> dict:
 
 
 def assign_per_thread_work(line_count: int, thread_count: int) -> tuple[int, int]:
-    """Return a tuple containing the lines_per_thread, lines_per_thread_last
+    """Return a tuple containing the lines_per_thread, lines_per_thread_last.
     """
     lines_per_thread = int(line_count / thread_count)
     lines_per_thread_last = lines_per_thread + (line_count % thread_count)
@@ -45,7 +45,7 @@ def assign_per_thread_work(line_count: int, thread_count: int) -> tuple[int, int
 
 
 def assign_indexes(filename: str, thread_count: int) -> list:
-    """Return a list of tuples (startIndex, endIndex) for each thread
+    """Return a list of tuples (startIndex, endIndex) for each thread.
     """
     line_count = count_lines(filename)
     start_index = 0
@@ -72,7 +72,7 @@ def assign_indexes(filename: str, thread_count: int) -> list:
 
 
 def http_get(http_get_parameters):
-    """Perform simple GET request using requests module
+    """Perform simple GET request using requests module.
     """
     indexed_wordlist, wordlist_indexes, target_webpage = http_get_parameters
     target_webpage = bytes(target_webpage, 'utf8')
@@ -88,7 +88,7 @@ def http_get(http_get_parameters):
 
 
 def handle_user_input() -> argparse.Namespace:
-    """This method uses argparse to process user input
+    """This method uses argparse to process user input.
     """
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--url"     , help="Target Website/URL/URI to enumerate", type=str)
@@ -127,7 +127,7 @@ def handle_user_input() -> argparse.Namespace:
 
 
 def run(args: argparse.Namespace) -> None:
-    """Central point to run a job
+    """Central point to run a job.
     """
     wordlist_indexed = index_file(args.wordlist)
 
@@ -139,7 +139,7 @@ def run(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    """Start here
+    """Start here.
     """
     args = handle_user_input()
     run(args)
