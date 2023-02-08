@@ -35,7 +35,9 @@ def test_count_lines_should_count_100_lines_in_file():
     error_message = """
     Number of lines do not equal 100.
     """
-    assert pb.count_lines(helper.FILEPATH_TEST_FILES_100_LINE_FILE) == 100, error_message
+    assert (
+        pb.count_lines(helper.FILEPATH_TEST_FILES_100_LINE_FILE) == 100
+    ), error_message
 
 
 @pytest.mark.index_file

@@ -1,11 +1,14 @@
 """Demo module"""
-import pybuster
+import logging
+from pybuster import handle_user_input
+from pybuster import run
 
 
 def main():
     """Start here"""
-    args = pybuster.handle_user_input()
-    pybuster.run(args)
+    logging.basicConfig(level=logging.INFO)
+    args = handle_user_input()
+    run(args)
 
 
 if __name__ == "__main__":

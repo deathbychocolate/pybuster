@@ -1,4 +1,5 @@
-"""Pybuster file contains all functions needed to bust a target
+"""
+Pybuster file contains all functions needed to bust a target
 """
 from concurrent.futures import ThreadPoolExecutor
 
@@ -175,7 +176,10 @@ def run(args: argparse.Namespace) -> None:
     with ThreadPoolExecutor(args.threads) as executor:
         for i in range(args.threads):
             http_get_parameters = (
-                wordlist_indexed, file_thread_indexes[i], args.url)
+                wordlist_indexed,
+                file_thread_indexes[i],
+                args.url
+            )
             executor.submit(http_get, http_get_parameters)
 
 
