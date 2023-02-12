@@ -26,7 +26,7 @@ def test_should_generate_internet_explorer_user_agent(setup):
     fail_message = "FAIL: the user agent is not windows explorer."
     headers_object = setup
     user_agent = headers_object.generate_user_agent_for_internet_explorer()
-    is_internet_explorer = "Windows" in user_agent
+    is_internet_explorer = "MSIE" in user_agent
     assert is_internet_explorer, fail_message
 
 
