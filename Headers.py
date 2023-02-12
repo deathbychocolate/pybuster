@@ -3,6 +3,7 @@ A header object
 """
 import random
 from fake_useragent import UserAgent
+import constants
 
 
 class Headers:
@@ -15,12 +16,20 @@ class Headers:
     def __init__(self):
         self.user_agent = "Pybuster"
 
-    def generate_random_user_agent():
+    def generate_random_user_agent(self):
         """
         Returns a string that represents a random User-Agent defined in this file
         """
-        random.randomint([])
-        user_agent = ""
+        browser_name = random.choice(constants.SUPPORTED_BROWSER_NAMES)
+        if browser_name == constants.BROWSER_NAME_FIREFOX:
+            user_agent = self.generate_user_agent_for_firefox()
+        elif browser_name == constants.BROWSER_NAME_CHROME:
+            user_agent = self.generate_user_agent_for_chrome()
+        elif browser_name == constants.BROWSER_NAME_SAFARI:
+            user_agent = self.generate_user_agent_for_safari()
+        elif browser_name == constants.BROWSER_NAME_INTERNET_EXPLORER:
+            user_agent = self.generate_user_agent_for_internet_explorer()
+
         return user_agent
 
     def generate_user_agent_for_internet_explorer(self) -> str:
