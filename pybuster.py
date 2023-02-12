@@ -15,60 +15,23 @@ from constants import URL_FORMAT_BACKSLASH
 from constants import VERSION_NUMBER
 
 
-def count_lines(filepath: str) -> int:
-    """
-    Return the number (int) of lines in a file, given a provided filepath.
-    """
-    line_count = 0
-    with open(filepath, "rb") as filepointer:
-        logging.info("counting the lines in '%s'...", {filepath})
-        line_count = len(filepointer.readlines())
-        logging.info("completed the lines in '%s'...", {filepath})
-    return line_count
+def _run_pybuster(args: argparse.Namespace) -> None:
+    wordlist_indexed = _index_the_file(args.wordlist)
+    file_thread_indexes = _assign_indexes(args.wordlist, args.threads)
+    with ThreadPoolExecutor(args.threads) as executor:
+        for i in range(args.threads):
+            http_get_parameters = (wordlist_indexed, file_thread_indexes[i], args.url)
+            executor.submit(_http_get, http_get_parameters)
 
 
-def index_file(filepath: str) -> dict:
-    """
-    Return a dictionary where the key is the 'line number' and the value is the 'word'.
-    """
-    with open(filepath, "rb") as filepointer:
-        logging.info("opened '%s' succesfully...", filepath)
-        indexed_wordlist = {}
-        line_count = 1
-        for line in filepointer.readlines():
-            indexed_wordlist[line_count] = line.rstrip()
-            line_count = line_count + 1
-        logging.info("completed indexing of '%s'...", filepath)
-
-    if len(indexed_wordlist) == 0:
-        logging.critical("The wordlist seems to be empty...")
-        raise ValueError("The wordlist seems to be empty...")
-
-    return indexed_wordlist
-
-
-def assign_per_thread_work(line_count: int, thread_count: int) -> tuple[int, int]:
-    """
-    Return a tuple containing the lines_per_thread, lines_per_thread_last.
-    """
-    logging.info("assigning number of lines per thread...")
-    lines_per_thread = int(line_count / thread_count)
-    lines_per_thread_last = lines_per_thread + (line_count % thread_count)
-    logging.info("completed assigning number of lines per thread...")
-    return lines_per_thread, lines_per_thread_last
-
-
-def assign_indexes(filepath: str, thread_count: int) -> list:
-    """
-    Return a list of tuples (startIndex, endIndex) for each thread.
-    """
-    line_count = count_lines(filepath)
+def _assign_indexes(filepath: str, thread_count: int) -> list:
+    line_count = _count_lines_in_file(filepath)
     start_index = 0
     end_index = 0
 
     file_thread_indexes = []
     count = 1  # start at 1 so that we treat the last thread differently
-    lines_per_thread, lines_per_thread_last = assign_per_thread_work(
+    lines_per_thread, lines_per_thread_last = _assign_work_to_each_thread(
         line_count, thread_count
     )
 
@@ -89,10 +52,41 @@ def assign_indexes(filepath: str, thread_count: int) -> list:
     return file_thread_indexes
 
 
-def http_get(http_get_parameters):
-    """
-    Perform simple GET request using requests module.
-    """
+def _count_lines_in_file(filepath: str) -> int:
+    line_count = 0
+    with open(filepath, "rb") as filepointer:
+        logging.info("counting the lines in '%s'...", {filepath})
+        line_count = len(filepointer.readlines())
+        logging.info("completed the lines in '%s'...", {filepath})
+    return line_count
+
+
+def _index_the_file(filepath: str) -> dict:
+    with open(filepath, "rb") as filepointer:
+        logging.info("Opened '%s' succesfully...", filepath)
+        indexed_wordlist = {}
+        line_count = 1
+        for line in filepointer.readlines():
+            indexed_wordlist[line_count] = line.rstrip()
+            line_count = line_count + 1
+        logging.info("completed indexing of '%s'...", filepath)
+
+    if len(indexed_wordlist) == 0:
+        logging.critical("The wordlist seems to be empty...")
+        raise ValueError("The wordlist seems to be empty...")
+
+    return indexed_wordlist
+
+
+def _assign_work_to_each_thread(line_count: int, thread_count: int) -> tuple[int, int]:
+    logging.info("assigning number of lines per thread...")
+    lines_per_thread = int(line_count / thread_count)
+    lines_per_thread_last = lines_per_thread + (line_count % thread_count)
+    logging.info("completed assigning number of lines per thread...")
+    return lines_per_thread, lines_per_thread_last
+
+
+def _http_get(http_get_parameters):
     indexed_wordlist, wordlist_indexes, target_webpage = http_get_parameters
     target_webpage = bytes(target_webpage, "utf8")
     start_index, end_index = wordlist_indexes
@@ -106,10 +100,7 @@ def http_get(http_get_parameters):
         start_index = start_index + 1
 
 
-def handle_user_input() -> argparse.Namespace:
-    """
-    This method uses argparse to process user input.
-    """
+def _handle_user_input() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-u",
@@ -165,25 +156,12 @@ def handle_user_input() -> argparse.Namespace:
     return arguments
 
 
-def run(args: argparse.Namespace) -> None:
-    """
-    Central point to run a job.
-    """
-    wordlist_indexed = index_file(args.wordlist)
-
-    file_thread_indexes = assign_indexes(args.wordlist, args.threads)
-    with ThreadPoolExecutor(args.threads) as executor:
-        for i in range(args.threads):
-            http_get_parameters = (wordlist_indexed, file_thread_indexes[i], args.url)
-            executor.submit(http_get, http_get_parameters)
-
-
 def main() -> None:
     """
     Start here.
     """
-    args = handle_user_input()
-    run(args)
+    args = _handle_user_input()
+    _run_pybuster(args)
 
 
 if __name__ == "__main__":
