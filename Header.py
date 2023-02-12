@@ -2,8 +2,10 @@
 A header object
 """
 
+from fake_useragent import UserAgent
 
-class Headers:
+
+class Header:
     """
     A header
     """
@@ -16,6 +18,14 @@ class Headers:
         Returns the User Agent as a string type
         """
         return self.user_agent
+
+    def generate_fake_user_agent(self):
+        """
+        Generates fake user agent
+        """
+        fake_user_agent = UserAgent()
+        return fake_user_agent.ie
+
 
 # # SAMPLE HTTP GET HEADERS
 # Host: www.google.com
