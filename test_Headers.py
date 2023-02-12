@@ -2,6 +2,8 @@ import pytest
 
 from Headers import Headers
 
+import constants
+
 
 @pytest.fixture
 def setup(scope="session"):
@@ -26,7 +28,7 @@ def test_should_generate_internet_explorer_user_agent(setup):
     fail_message = "FAIL: the user agent is not windows explorer."
     headers_object = setup
     user_agent = headers_object.generate_user_agent_for_internet_explorer()
-    is_internet_explorer = "MSIE" in user_agent
+    is_internet_explorer = constants.BROWSER_NAME_INTERNET_EXPLORER in user_agent
     assert is_internet_explorer, fail_message
 
 
@@ -34,7 +36,7 @@ def test_should_generate_firefox_user_agent(setup):
     fail_message = "FAIL: the user agent is not firefox explorer."
     headers_object = setup
     user_agent = headers_object.generate_user_agent_for_firefox()
-    is_firefox = "Firefox" in user_agent
+    is_firefox = constants.BROWSER_NAME_FIREFOX in user_agent
     assert is_firefox, fail_message
 
 
@@ -42,7 +44,7 @@ def test_should_generate_chrome_user_agent(setup):
     fail_message = "FAIL: the user agent is not chrome."
     headers_object = setup
     user_agent = headers_object.generate_user_agent_for_chrome()
-    is_chrome = "Chrome" in user_agent
+    is_chrome = constants.BROWSER_NAME_CHROME in user_agent
     assert is_chrome, fail_message
 
 
@@ -50,5 +52,5 @@ def test_should_generate_safari_user_agent(setup):
     fail_message = "FAIL: the user agent is not safari."
     headers_object = setup
     user_agent = headers_object.generate_user_agent_for_safari()
-    is_safari = "Safari" in user_agent
+    is_safari = constants.BROWSER_NAME_SAFARI in user_agent
     assert is_safari, fail_message
