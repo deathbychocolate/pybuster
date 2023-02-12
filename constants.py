@@ -1,4 +1,5 @@
-"""This file holds all constants for the project
+"""
+Common project constants
 """
 THREAD_COUNT_DEFAULT = 10
 STATUS_CODES_POSITIVE = [200, 204, 301, 302, 307, 401, 403]
@@ -6,4 +7,13 @@ STATUS_CODES_NEGATIVE = [404]
 URL_FORMAT_BACKSLASH = "/"
 URL_FORMAT_HTTP = "http://"
 URL_FORMAT_HTTPS = "https://"
-VERSION_NUMBER = "no_version_yet"
+VERSION_NUMBER = "0.0.0"
+
+# PROJECT FILE INDEX
+FILEPATH_TEST_FILES_0_LINE_FILE = "./test_files/0_line_file.txt"
+FILEPATH_TEST_FILES_1_LINE_FILE = "./test_files/1_line_file.txt"
+FILEPATH_TEST_FILES_10_LINE_FILE = "./test_files/10_line_file.txt"
+FILEPATH_TEST_FILES_100_LINE_FILE = "./test_files/100_line_file.txt"
+
+# NON EXISTING RESOURCES
+FILEPATH_TEST_FILES_DOES_NOT_EXIST = "./test_files/I_do_not_exist.txt"
