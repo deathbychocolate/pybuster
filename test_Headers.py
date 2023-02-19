@@ -11,7 +11,7 @@ def setup(scope="session"):
     return headers_object
 
 
-def test_should_generate_random_user_agents(setup):
+def test_should_generate_random_user_agent(setup):
     fail_message = "FAIL: there is at least one duplicate user agent."
     headers_object = setup
     user_agents = [
