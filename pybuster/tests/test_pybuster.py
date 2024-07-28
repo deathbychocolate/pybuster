@@ -1,6 +1,7 @@
 import pytest
-import pybuster as pb
-import constants
+from src import pb as pb
+
+from pybuster.src import constants
 
 
 @pytest.mark.count_lines

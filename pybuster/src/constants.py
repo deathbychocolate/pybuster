@@ -10,13 +10,13 @@ URL_FORMAT_HTTPS = "https://"
 VERSION_NUMBER = "0.0.0"
 
 # PROJECT FILE INDEX
-FILEPATH_TEST_FILES_0_LINE_FILE = "./test_files/0_line_file.txt"
-FILEPATH_TEST_FILES_1_LINE_FILE = "./test_files/1_line_file.txt"
-FILEPATH_TEST_FILES_10_LINE_FILE = "./test_files/10_line_file.txt"
-FILEPATH_TEST_FILES_100_LINE_FILE = "./test_files/100_line_file.txt"
+FILEPATH_TEST_FILES_0_LINE_FILE = "./resources/sample_files/test_files/0_line_file.txt"
+FILEPATH_TEST_FILES_1_LINE_FILE = "./resources/sample_files/test_files/1_line_file.txt"
+FILEPATH_TEST_FILES_10_LINE_FILE = "./resources/sample_files/test_files/10_line_file.txt"
+FILEPATH_TEST_FILES_100_LINE_FILE = "./resources/sample_files/test_files/100_line_file.txt"
 
 # NON EXISTING RESOURCES
-FILEPATH_TEST_FILES_DOES_NOT_EXIST = "./test_files/I_do_not_exist.txt"
+FILEPATH_TEST_FILES_DOES_NOT_EXIST = "./resources/sample_files/test_files/I_do_not_exist.txt"
 
 # BROWSER NAMES
 BROWSER_NAME_FIREFOX = "Firefox"

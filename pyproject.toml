@@ -1,0 +1,42 @@
+[project]
+authors = [{ name = "Damian Vonapartis", email = "damianosvon@gmail.com" }]
+name = "pybuster"
+version = "0.1.0"
+description = "A CLI tool for talking to the Openai API"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+keywords = [
+    "dibuster",
+    "dirb",
+    "cli",
+    "pybuster",
+    "terminal",
+    "enumerator",
+    "security",
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.11",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: Unix",
+]
+
+[project.urls]
+Repository = "https://github.com/deathbychocolate/pybuster"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+line_length = 120
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+tag_format = "$version"
+version_files = ["./pyproject.toml", "./pybuster/_version.py:__version__"]
+version_scheme = "semver"
+version_provider = "pep621"
+update_changelog_on_bump = true

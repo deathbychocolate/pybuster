@@ -1,18 +1,15 @@
 """
 Pybuster file contains all functions needed to bust a target
 """
+import argparse
+import logging
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
-import argparse
-import sys
-import logging
 import requests
 import validators
 
-from constants import THREAD_COUNT_DEFAULT
-from constants import STATUS_CODES_POSITIVE
-from constants import URL_FORMAT_BACKSLASH
-from constants import VERSION_NUMBER
+from pybuster.src.constants import STATUS_CODES_POSITIVE, THREAD_COUNT_DEFAULT, URL_FORMAT_BACKSLASH, VERSION_NUMBER
 
 
 def _run_pybuster(args: argparse.Namespace) -> None:
@@ -63,7 +60,7 @@ def _count_lines_in_file(filepath: str) -> int:
 
 def _index_the_file(filepath: str) -> dict:
     with open(filepath, "rb") as filepointer:
-        logging.info("Opened '%s' succesfully...", filepath)
+        logging.info("Opened '%s' successfully...", filepath)
         indexed_wordlist = {}
         line_count = 1
         for line in filepointer.readlines():
@@ -98,71 +95,3 @@ def _http_get(http_get_parameters):
         if response.status_code in STATUS_CODES_POSITIVE:
             print(f"GET {response.status_code} {target_full.decode()}")
         start_index = start_index + 1
-
-
-def _handle_user_input() -> argparse.Namespace:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-u",
-        "--url",
-        help="Target Website/URL/URI to enumerate",
-        type=str
-    )
-    parser.add_argument(
-        "-w",
-        "--wordlist",
-        help="Wordlist to use",
-        type=str
-    )
-    parser.add_argument(
-        "-t",
-        "--threads",
-        help="Number of threads [default=10]",
-        type=int
-    )
-    parser.add_argument(
-        "-v",
-        "--version",
-        help="Show program version"
-    )
-    arguments = parser.parse_args()
-
-    if arguments.version is not None:
-        print(VERSION_NUMBER)
-        sys.exit(0)
-
-    # manual argument check (major)
-    if arguments.url is None:
-        logging.critical("missing argument 'url'")
-        parser.print_help()
-        sys.exit(1)
-    elif arguments.wordlist is None:
-        logging.critical("missing argument 'wordlist'")
-        parser.print_help()
-        sys.exit(1)
-
-    # manual argument check (minor)
-    if not validators.url(arguments.url):
-        logging.critical("url parameter is not valid")
-        logging.critical("make sure to include the protocol (http[s]://)")
-        sys.exit(1)
-    if not arguments.url.endswith(URL_FORMAT_BACKSLASH):
-        arguments.url = "".join([arguments.url, URL_FORMAT_BACKSLASH])
-
-    # set default values
-    if arguments.threads is None:
-        arguments.threads = THREAD_COUNT_DEFAULT
-
-    return arguments
-
-
-def main() -> None:
-    """
-    Start here.
-    """
-    args = _handle_user_input()
-    _run_pybuster(args)
-
-
-if __name__ == "__main__":
-    main()

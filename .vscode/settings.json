@@ -1,0 +1,10 @@
+{
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "cSpell.words": [
+        "filepointer",
+        "pybuster",
+        "Wordlist"
+    ],
+    "python.analysis.typeCheckingMode": "basic"
+}

@@ -1,12 +1,11 @@
 import pytest
 
-from Headers import Headers
+from pybuster.src import constants
+from pybuster.src.headers import Headers
 
-import constants
 
-
-@pytest.fixture
-def setup(scope="session"):
+@pytest.fixture(scope="session", autouse=True)
+def setup():
     headers_object = Headers()
     return headers_object
 
